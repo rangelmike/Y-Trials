@@ -36,6 +36,7 @@ sessionStorage.setItem("myName", myName);
 let valid = false;
 
 const signinBtn = document.getElementById("signinBtn");
+console.log(firebaseConfig);
 
 function getFromDB(where) {
 	const dbRef = ref(getDatabase());
