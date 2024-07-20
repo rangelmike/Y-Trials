@@ -13,6 +13,7 @@ import {
 	signOut,
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
+console.log(process.env.FIREBASE_API_KEY.replace(/"/g, ''));
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY.replace(/"/g, ''),
   authDomain: process.env.FIREBASE_AUTH_DOMAIN.replace(/"/g, ''),
