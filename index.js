@@ -14,6 +14,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
 console.log(process.env.FIREBASE_API_KEY.replace(/"/g, ''));
+console.log(process.env.FIREBASE_AUTH_DOMAIN.replace(/"/g, ''));
+console.log(process.env.FIREBASE_PROJECT_ID.replace(/"/g, ''));
+console.log(process.env.FIREBASE_STORAGE_BUCKET.replace(/"/g, ''));
+console.log(process.env.FIREBASE_MESSAGING_SENDER_ID.replace(/"/g, ''));
+console.log(process.env.FIREBASE_APP_ID.replace(/"/g, ''));
+console.log(process.env.FIREBASE_MEASUREMENT_ID.replace(/"/g, ''));
+console.log(process.env.FIREBASE_DATABASE_URL.replace(/"/g, ''));
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY.replace(/"/g, ''),
   authDomain: process.env.FIREBASE_AUTH_DOMAIN.replace(/"/g, ''),
