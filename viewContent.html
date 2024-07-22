@@ -13,10 +13,19 @@
 		<div id="opciones">
 			<a href="addReu.html">Nueva Entrada</a>
 			<a href="viewContent.html">Ver Datos</a>
-			<a href="newOrder.html" id="NO">Re-estructurar centros</a>
+			<a href="newOrder.html" class="NO">Re-estructurar centros</a>
 		</div>
 		<div id="datos">
-      <div class="loader" id="loader"></div>
+      <div class="loader" id="loader"></div>      
+      </div>
+    </div>
+    <div class="NO" id="SaveOptions">
+      <div>
+        <input type="checkbox" id="reset">Reiniciar la Base de Datos</input>
+        <input type="checkbox" id="UpSheet" checked>Actualizar Hoja de Cálculo</input>
+      </div>
+      <div>
+        <button id="UpStuff">Confirmar y Guardar</button>
     </div>
 		<script type="module" src="viewContent.js"></script>
 	</body>

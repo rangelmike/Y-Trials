@@ -16,6 +16,7 @@ import {
 	GoogleAuthProvider,
 	signOut,
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { updateSheet } from "./manageDbAndSs";
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY.replace(/"/g, ''),
@@ -34,6 +35,7 @@ const auth = getAuth(app);
 
 const allDataDiv = document.getElementById("datos");
 const loader = document.getElementById("loader");
+const myName = sessionStorage.getItem("myName");
 let allInfo;
 
 class Queue {
@@ -82,6 +84,13 @@ let showQueue = new Queue();
 document.getElementById("logoutBtn").addEventListener("click", () => {
 	signOut(auth);
 	window.location.href = "index.html";
+});
+
+document.getElementById("UpStuff").addEventListener('click', () => {    
+    if(document.getElementById("reset").checked)
+        console.log("reset");
+    if(document.getElementById("UpSheet").checked)
+        updateSheet(allInfo, myName);        
 });
 
 function creaText(text) {
@@ -281,14 +290,17 @@ function getFromDB(where) {
 }
 
 window.onload = async function () {
-	const myEmail = sessionStorage.getItem("myEmail");
-	const myName = sessionStorage.getItem("myName");
+	const myEmail = sessionStorage.getItem("myEmail");	
 	const myLocation = `/personas/${myName}`;
     if (myEmail == "") window.location.href = "index.html";
     const jefe = Object.keys(await getFromDB("jefe"))[0].replace(/,/g, ".");
 
-    if(jefe == myEmail)
-        document.getElementById("NO").style.display = "block";
+    if(jefe == myEmail){
+        const todos = document.querySelectorAll(".NO");        
+        for(let act = 0; act < todos.length; act++){
+            todos[act].style.display = "block";
+        }
+    }
 	document.getElementById("email").textContent = myEmail;
 	document.getElementById("name").textContent = myName;
 

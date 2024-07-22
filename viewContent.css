@@ -60,7 +60,7 @@ h4:hover {
 	cursor: pointer;
 }
 
-#NO{
+.NO{
   display: none;
 }
 
@@ -121,4 +121,11 @@ textarea {
   background: none;  
   width: 100%;  
   user-select: none;  
+}
+
+#SaveOptions {  
+  max-width: 500px;
+  margin: 0 auto;  
+  border: 2px solid black;
+  border-radius: 18px;
 }
