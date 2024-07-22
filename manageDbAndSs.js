@@ -48,6 +48,7 @@ function getTotalStr(array){
 
 export async function updateSheet(info, jefe){    
     let pos = 2;
+    const SsURL = process.env.SPREADSHEET_APP_ID.replace(/"/g, '');    
     for(let c = 0; c < Object.values(info).length; c++){
         const act = Object.entries(info)[c];
         const name = act[0];
@@ -68,10 +69,9 @@ export async function updateSheet(info, jefe){
             I:cuotas,
             J:readBooks,
             Z:pos,
-        }         
-        console.log(process.env.SPREADSHEET_APP_ID);
+        }                         
         await fetch(
-            "https://script.google.com/macros/s/AKfycbxCcBN7Ono829TeRK8iB3QQmZCsBSrds_h4a0pXClcl8T6SEo-TM4oEAShs5fCRXP1V/exec",
+            SsURL,
             {
                 method: "POST",
                 headers: {
@@ -89,7 +89,7 @@ export async function updateSheet(info, jefe){
         
     }
     await fetch(
-        "https://script.google.com/macros/s/AKfycbxCcBN7Ono829TeRK8iB3QQmZCsBSrds_h4a0pXClcl8T6SEo-TM4oEAShs5fCRXP1V/exec",
+        SsURL,
         {
             method: "POST",
             headers: {
