@@ -16,7 +16,7 @@ import {
 	GoogleAuthProvider,
 	signOut,
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { updateSheet } from "./manageDbAndSs";
+import { resetDB, updateSheet } from "./manageDbAndSs";
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY.replace(/"/g, ''),
@@ -36,6 +36,7 @@ const auth = getAuth(app);
 const allDataDiv = document.getElementById("datos");
 const loader = document.getElementById("loader");
 const myName = sessionStorage.getItem("myName");
+const UploadBtn = document.getElementById("UpStuff");
 let allInfo;
 
 class Queue {
@@ -86,11 +87,16 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 	window.location.href = "index.html";
 });
 
-document.getElementById("UpStuff").addEventListener('click', () => {    
-    if(document.getElementById("reset").checked)
-        console.log("reset");
-    if(document.getElementById("UpSheet").checked)
-        updateSheet(allInfo, myName);        
+UploadBtn.addEventListener('click', async () => {    
+    if(document.getElementById("UpSheet").checked){
+        UploadBtn.style.display = "none";
+        await updateSheet(allInfo, myName);        
+    }
+    if(document.getElementById("reset").checked){
+        await resetDB(allInfo);
+        location.reload();
+    }
+    UploadBtn.style.display = "block";
 });
 
 function creaText(text) {

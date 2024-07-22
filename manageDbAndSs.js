@@ -99,10 +99,38 @@ export async function updateSheet(info, jefe){
             body: JSON.stringify({desde: pos}),
         }
     )        
+    .then(response => {
+        alert("Hoja de Cálculo actualizada correctamente")
+    })
     .catch((error) => {
         console.error("Error:", error);
         alert("Error: " + error.message);
     });
+}
+
+export function resetDB(info){    
+    let personas = {};
+    for(let c = 0; c < Object.values(info).length; c++){
+        const act = Object.entries(info)[c];
+        if(act[1]["subs"] != undefined && act[1]["subs"] != ""){            
+            const newObj = {
+                subs:act[1]["subs"],
+                email:act[1]["email"],
+                NombreCentro:act[1]["NombreCentro"],
+            }            
+            personas[act[0]] = newObj;
+        }        
+    }    
+    update(ref(database, "/"), {
+        personas
+    })
+    .then(response => {
+        alert("Base de Datos actualizada correctamente");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Error: " + error);
+    })
 }
 
 // MODIFICACIONES:
