@@ -434,27 +434,27 @@ window.onload = async function () {
 
     if(jefe == myEmail){
         document.getElementById("NO").style.display = "block";
-		if(isInRange(await getFromDB("LastUpdate"), 57)){
-			console.log(true);
-			const allInfo = await getFromDB("personas");	
-			const esperaText = document.createElement("h2");
-			esperaText.textContent = "Espera en lo que se actualizan los datos (2-3min), mientras hablen sobre de qué son los reportes de cada quien :)"
-			allData.append(esperaText);
-			await updateSheet(allInfo, myName);			
-			allData.removeChild(esperaText);
-			resetDB(allInfo);
-			const today = new Date();
-			const year = today.getFullYear();
-			const month = today.getMonth() + 1; 
-			const day = today.getDate();
-			const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
-			update(ref(database, "/"),{
-				LastUpdate: formattedDate,
-			})
-		}
-		else{
-			console.log(false);
-		}
+		// if(isInRange(await getFromDB("LastUpdate"), 57)){
+		// 	console.log(true);
+		// 	const allInfo = await getFromDB("personas");	
+		// 	const esperaText = document.createElement("h2");
+		// 	esperaText.textContent = "Espera en lo que se actualizan los datos (2-3min), mientras hablen sobre de qué son los reportes de cada quien :)"
+		// 	allData.append(esperaText);
+		// 	await updateSheet(allInfo, myName);			
+		// 	allData.removeChild(esperaText);
+		// 	resetDB(allInfo);
+		// 	const today = new Date();
+		// 	const year = today.getFullYear();
+		// 	const month = today.getMonth() + 1; 
+		// 	const day = today.getDate();
+		// 	const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+		// 	update(ref(database, "/"),{
+		// 		LastUpdate: formattedDate,
+		// 	})
+		// }
+		// else{
+		// 	console.log(false);
+		// }
 	}
 	document.getElementById("email").textContent = myEmail;
 	document.getElementById("name").textContent = myName;
