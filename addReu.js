@@ -56,33 +56,6 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 	window.location.href = "index.html";
 });
 
-function isInRange(givenDate, range) {
-	const today = new Date();
-	if(givenDate == 0){
-		const year = today.getFullYear();
-		const month = today.getMonth() + 1; 
-		const day = today.getDate();
-		const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
-		update(ref(database, "/"),{
-			LastUpdate: formattedDate,
-		})
-		return false;
-	}
-	// Parse the given date
-	const given = new Date(givenDate);
-  
-	// Create a new Date object for the current date
-  
-	// Calculate the difference in time (milliseconds)
-	const differenceInTime = today.getTime() - given.getTime();
-  
-	// Convert the difference in time to days
-	const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-  
-	// Check if the difference is 57 days or more
-	return differenceInDays >= range;
-}
-
 function createUpdates() {
 	for (const act of asistentes) {
 		const location = `personas/${act.nombre}`;
@@ -432,33 +405,10 @@ window.onload = async function () {
     if (myEmail == "") window.location.href = "index.html";
     const jefe = Object.keys(await getFromDB("jefe"))[0].replace(/,/g, ".");
 
-    if(jefe == myEmail){
+    if(jefe == myEmail)
         document.getElementById("NO").style.display = "block";
-		// if(isInRange(await getFromDB("LastUpdate"), 57)){
-		// 	console.log(true);
-		// 	const allInfo = await getFromDB("personas");	
-		// 	const esperaText = document.createElement("h2");
-		// 	esperaText.textContent = "Espera en lo que se actualizan los datos (2-3min), mientras hablen sobre de qué son los reportes de cada quien :)"
-		// 	allData.append(esperaText);
-		// 	await updateSheet(allInfo, myName);			
-		// 	allData.removeChild(esperaText);
-		// 	resetDB(allInfo);
-		// 	const today = new Date();
-		// 	const year = today.getFullYear();
-		// 	const month = today.getMonth() + 1; 
-		// 	const day = today.getDate();
-		// 	const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
-		// 	update(ref(database, "/"),{
-		// 		LastUpdate: formattedDate,
-		// 	})
-		// }
-		// else{
-		// 	console.log(false);
-		// }
-	}
 	document.getElementById("email").textContent = myEmail;
 	document.getElementById("name").textContent = myName;
-
 
 	mySubs = await getSubs(myLocation + "/subs");
     loader.style.display = "none";
