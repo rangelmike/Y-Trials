@@ -502,10 +502,3 @@ window.onload = async function () {
 
     buildAsistencia()	
 };
-
-
-// Changes:
-// 	addReu.js
-// 	addReu.css 
-// 	viewContent.html
-// 	viewContent.js 
