@@ -35,6 +35,7 @@ const auth = getAuth(app);
 
 const allDataDiv = document.getElementById("datos");
 const loader = document.getElementById("loader");
+const upLoader = document.getElementById("UpLoader");
 const myName = sessionStorage.getItem("myName");
 const UploadBtn = document.getElementById("UpStuff");
 let allInfo;
@@ -90,6 +91,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 UploadBtn.addEventListener('click', async () => {    
     if(document.getElementById("UpSheet").checked){
         UploadBtn.style.display = "none";
+		upLoader.style.display = "block";
         await updateSheet(allInfo, myName);        
     }
     if(document.getElementById("reset").checked){
@@ -97,6 +99,7 @@ UploadBtn.addEventListener('click', async () => {
         location.reload();
     }
     UploadBtn.style.display = "block";
+	upLoader.style.display = "none";
 });
 
 function creaText(text) {
@@ -130,6 +133,15 @@ function getTotalStrings(deQue, deQuien) {
 function invertDisplay(display) {
 	if (display == "none") return "block";
 	return "none";
+}
+
+function formatArrayToString(array) {
+    // Filter out empty strings and format each non-empty string
+    const formattedArray = array
+        .filter(str => str.trim() !== '') // Remove empty strings
+        .map(str => `- ${str}`); // Add "-" to each string
+    // Join the formatted strings with a newline character
+    return formattedArray.join('\n');
 }
 
 function buildDataBlock(padre, hijos) {
@@ -189,14 +201,29 @@ function buildDataBlock(padre, hijos) {
 		const totCuotas = getTotalNums("cuotas", act);
 		hijoDiv.append(creaText(`Total cuotas pagadas: ${totCuotas}`));
 
-		const totComis = getTotalNums("comisiones", act);
+		const totComisDone = getTotalNums("DoneComis", act);
+		const totComisNot = getTotalNums("NotComis", act);
+		const totComis = totComisDone + totComisNot;
 		hijoDiv.append(
 			creaText(
 				`Promedio de cumplimiento de comisiones: ${(
-					(totComis*100) / totalReus
-				).toFixed(2)}% (${totComis}/${totalReus})`
+					(totComisDone*100) / totComis
+				).toFixed(2)}% (${totComisDone}/${totComis})`
 			)
 		);
+
+		const proxComis = allInfo[act].ListComis;
+        if(proxComis != undefined && proxComis != ""){            			       
+			hijoDiv.append(creaText(`Comisiones pendientes: `))
+            const seeComis = document.createElement("textarea");
+            seeComis.value = formatArrayToString(proxComis);
+            seeComis.style.height = 'auto';
+            seeComis.setAttribute("readonly", "true");                                                              
+            hijoDiv.append(seeComis);            
+        }
+        else{
+            hijoDiv.append(creaText(`Comisiones pendientes: ninguna`))
+        }
 
 		let libroAct = "";
 		let libroActDate = "";
@@ -300,6 +327,7 @@ window.onload = async function () {
 	const myLocation = `/personas/${myName}`;
     if (myEmail == "") window.location.href = "index.html";
     const jefe = Object.keys(await getFromDB("jefe"))[0].replace(/,/g, ".");
+	upLoader.style.display = "none";
 
     if(jefe == myEmail){
         const todos = document.querySelectorAll(".NO");        

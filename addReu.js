@@ -49,12 +49,36 @@ const parrafo =
 &nbsp&nbsp&nbsp&nbsp -Su trabajo al exterior.<br>
 También es importante recordar tener al menos una entrevista personal al mes con cada uno de ellos.<br><br>
 Espacio para observaciones:<br>`;
-const campos = ["comisiones", "cuotas", "ejercicio", "rprts", "misas", "rosarios"]
+const campos = ["DoneComis","NotComis", "cuotas", "ejercicio", "rprts", "misas", "rosarios"]
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
 	signOut(auth);
 	window.location.href = "index.html";
 });
+
+function processString(input) {
+    // Remove all line breaks from the string
+    const cleanedString = input.replace(/\n/g, '').replace(/\s*,\s*/g, ',');
+    
+    // Split the cleaned string by commas
+    const substrings = cleanedString.split(',');
+    
+    return substrings;
+}
+
+function deleteExactMatch(mainString, subString) {
+    // Find the position of the substring
+    const index = mainString.indexOf(subString);
+    // If the substring is not found, return the original string
+    if (index === -1) {
+        return mainString;
+    }
+    // Remove the exact match of the substring
+    const beforeSubstring = mainString.slice(0, index);
+    const afterSubstring = mainString.slice(index + subString.length);
+    // Return the new string with the substring removed
+    return beforeSubstring + afterSubstring;
+}
 
 function createUpdates() {
 	for (const act of asistentes) {
@@ -63,6 +87,10 @@ function createUpdates() {
 		push(ref(database, location + "/wentDates"), act.fecha);
 		delete act.fecha;
         for (const campo of campos){
+			if(act[campo] == NaN){
+				push(ref(database, location + `/${campo}`), 0);
+		    	delete act[campo];
+			}
             push(ref(database, location + `/${campo}`), act[campo]);
 		    delete act[campo];
         }
@@ -70,6 +98,10 @@ function createUpdates() {
             observaciones: act["observaciones"]
         })
         delete act.observaciones;
+		update(ref(database, location), {
+			ListComis: act["ListComis"]
+		})
+		delete act.ListComis;
         if (act.listBooks) {
             push(ref(database, location + "/listBooks"), act.listBooks);
             delete act.listBooks;
@@ -259,22 +291,62 @@ function buildAsistencia() {
 	});
 }
 
-function buildComisiones(name, inDbName) {
+async function buildComisiones(name, inDbName) {
 	const actDiv = document.createElement("div");
 	const title = document.createElement("h2");
 	title.textContent = name;
 	actDiv.classList = "getearData";
 	actDiv.append(title);
 	allData.append(actDiv);
-
+	
 	for (let c = 0; c < asistentes.length; c++) {
-		const act = document.createElement("p");
-		act.textContent = asistentes[c].nombre + " cumplio sus comisiones:";
-		actDiv.append(act);
-		actDiv.append(creaCheck("ifComision", ""));
+		const name = document.createElement("p");
+		name.textContent = asistentes[c].nombre;
+		const comisAnt = await getFromDB(`personas/${asistentes[c].nombre}/ListComis`);
+		const beforeComisText = document.createElement("p");		
+		const newComisText = document.createElement("p");
+		beforeComisText.innerHTML = `Comisiones que debió haber cumplido:<br>`;
+		newComisText.textContent = "Comisiones para la siguiente semana: ";
+		const nuevasComis = document.createElement("textarea");
+		nuevasComis.placeholder = "Introducir las nuevas comisiones, cada una separada por una coma de la otra";
+		nuevasComis.classList = "ListComis";
+		actDiv.append(name);
+		actDiv.append(beforeComisText);
+		for (let k=0; k < comisAnt.length; k++){		
+			const auxDiv = document.createElement("div");
+			const auxText = document.createElement("p");
+			auxDiv.classList = "OneComi";
+			auxText.innerHTML = `&nbsp&nbsp&nbsp&nbsp-${comisAnt[k]}<br>`
+			if(comisAnt[k] == "")
+				continue;			
+			auxDiv.append(auxText);
+			auxDiv.append(creaCheck("ifComision", `c${c}k${k}`));			
+			actDiv.append(auxDiv);
+			document.getElementById(`c${c}k${k}`).addEventListener('click',(e) => {				
+				if(document.getElementById(`c${c}k${k}`).checked){
+					nuevasComis.value = deleteExactMatch(nuevasComis.value, comisAnt[k]);
+					return;
+				}				
+				if(nuevasComis.value == ""){
+					nuevasComis.value = `${comisAnt[k]}`;
+				}
+				else if(!nuevasComis.value.includes(comisAnt[k])){
+					nuevasComis.value+=`, ${comisAnt[k]}`;		
+				}
+			});
+		}
+		actDiv.append(newComisText);
+		actDiv.append(nuevasComis);
 	}
 	for (let c = 0; c < faltantes.length; c++) {
-		faltantes[c][inDbName] = false;
+		const comisAnt = await getFromDB(`personas/${faltantes[c].nombre}/ListComis`);
+		for (let k = 0; k<comisAnt.length; k++){
+			if(comisAnt[k] == "")
+				continue;
+			if(faltantes[c]["NotComis"] == undefined)
+				faltantes[c]["NotComis"] = 0;
+			faltantes[c]["NotComis"]++;
+		}		
 	}
 
 	const finishBtn = document.createElement("button");
@@ -284,18 +356,28 @@ function buildComisiones(name, inDbName) {
 		e.preventDefault();
 		const checkboxes = document.querySelectorAll(".ifComision");
 		for (let c = 0; c < checkboxes.length; c++) {
-			if (checkboxes[c].checked) {
-				asistentes[c][inDbName] = true;
-			} else {
-				asistentes[c][inDbName] = false;
+			const deQuien = parseInt(checkboxes[c].id.slice(1), 10);
+			if(checkboxes[c].checked){
+				if(asistentes[deQuien]["DoneComis"] == undefined)
+					asistentes[deQuien]["DoneComis"] = 0;
+				asistentes[deQuien]["DoneComis"]++;
+			}				
+			else{
+				if(asistentes[deQuien]["NotComis"] == undefined)
+					asistentes[deQuien]["NotComis"] = 0;
+				asistentes[deQuien]["NotComis"]++;
 			}
+		}
+		const listasDeComis = document.querySelectorAll(".ListComis");
+		for (let c = 0; c < listasDeComis.length; c++){
+			asistentes[c]["ListComis"] = processString(listasDeComis[c].value);
 		}
 		allData.innerHTML = "";
 		buildLectura();
 	});
 }
 
-function creaLibro() {
+async function creaLibro(deQuien) {
 	const div = document.createElement("div");
 
 	const actBookTitle = document.createElement("p");
@@ -308,6 +390,11 @@ function creaLibro() {
 	actBookName.type = "text";
 	actBookName.classList = "currBook";
 	actBookName.placeholder = "Nombre del libro actual";
+	const currBook = await getFromDB(`personas/${deQuien}/actBook`);		
+	if(currBook != undefined && currBook != 0){
+		fecha.value = Object.values(currBook)[0];
+		actBookName.value = Object.keys(currBook)[0];
+	}
 	div.append(actBookTitle);
 	div.append(fecha);
 	div.append(actBookName);
@@ -324,7 +411,7 @@ function creaLibro() {
 	return div;
 }
 
-function buildLectura() {
+async function buildLectura() {
 	const actDiv = document.createElement("div");
 	const title = document.createElement("h2");
 	title.textContent = "Reporte de Lectura";
@@ -336,7 +423,7 @@ function buildLectura() {
 		const act = document.createElement("h3");
 		act.textContent = asistentes[c].nombre;
 		actDiv.append(act);
-		actDiv.append(creaLibro());
+		actDiv.append(await creaLibro(asistentes[c].nombre));
 	}
 
 	const finishBtn = document.createElement("button");
@@ -349,7 +436,7 @@ function buildLectura() {
 		const fnshBooks = document.querySelectorAll(".finishedBook");
 		for (let c = 0; c < fechas.length; c++) {
 			if (fechas[c].value != "") {
-				asistentes[c][currBooks[c].value] = fechas[c].value;
+				asistentes[c][currBooks[c].value.replace(/\./g, ',').replace(/\//g, '')] = fechas[c].value;
 			}
 			if (fnshBooks[c].value != "") {
 				asistentes[c].listBooks = fnshBooks[c].value;
@@ -415,3 +502,10 @@ window.onload = async function () {
 
     buildAsistencia()	
 };
+
+
+// Changes:
+// 	addReu.js
+// 	addReu.css 
+// 	viewContent.html
+// 	viewContent.js 
