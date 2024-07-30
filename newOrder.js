@@ -214,6 +214,11 @@ window.onload = async function () {
             todo.append(newBossDiv);   
             newBossBtn.addEventListener('click', function(){
                 // todo.innerHTML="";
+                const nombreNewBoss = newBossInput.value;
+                if(newBossInput.value == "" || nombreNewBoss.includes(".") || nombreNewBoss.includes("/") || nombreNewBoss.includes("[") || nombreNewBoss.includes("]") || nombreNewBoss.includes("#") || nombreNewBoss.includes("$")){
+                    alert("Entrada no válida (no puede contener '.' '#' '$' '[' ']' '/' o estar vacía)")
+                    return;
+                }                    
                 update(ref(database, `personas/${newBossInput.value.trimEnd()}`), {
                     subs:newBossInput.value.trimEnd()
                 })
