@@ -390,3 +390,76 @@ body {
 #theme-icon {
   font-size: 24px;
 }
+
+.bar-container {
+  width: 80%;
+  max-width: 400px;
+  background-color: rgb(219, 0, 0);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-left: 10px;
+}
+.bar {
+  height: 30px;
+  background-color: rgb(0, 190, 0);
+  width: 0;
+}
+
+.hijoDiv {
+  max-height: 0;
+  overflow: hidden;
+}
+
+.hijoDiv.showing {
+  animation: showAnimation 2.5s forwards; /* Change 1s to the duration you want for showing */
+}
+
+.hijoDiv.hiding {
+  animation: hideAnimation 0.7s forwards; /* Change 2s to the duration you want for hiding */
+}
+
+@keyframes showAnimation {
+  from {
+      max-height: 0;
+  }
+  to {
+      max-height: 2000px; /* Adjust to the expected maximum height */
+  }
+}
+
+@keyframes hideAnimation {
+  from {
+      max-height: 2000px; /* Adjust to the expected maximum height */
+  }
+  to {
+      max-height: 0;
+  }
+}
+
+.asistDiv{
+  margin-left: 10px;
+}
+
+.fc {
+  font-size: 12px; /* Adjust the font size */
+  width: 80%; /* Adjust the width */
+  max-width: 400px;
+  margin-left: 10px;
+}
+.fc-toolbar h2 {
+  font-size: 14px; /* Adjust the toolbar title font size */
+}
+.fc-daygrid-day {
+  height: 15px; /* Adjust the height of the day cells */
+}
+.fc-daygrid-event {
+  font-size: 10px; /* Adjust the event font size */
+}
+.fc-daygrid {
+  width: 100%; /* Adjust the width of the day grid */
+  max-width: 400px;
+}
+.fc-toolbar.fc-header-toolbar{
+  height: 15px;
+  font-size: small;
+}

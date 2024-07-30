@@ -176,6 +176,16 @@ function formatArrayToString(array) {
     return formattedArray.join('\n');
 }
 
+function creaBarra(porcent){
+	const barContainer = document.createElement("div");
+	const bar = document.createElement("div");
+	barContainer.classList = "bar-container";
+	bar.classList = "bar";
+	bar.style.width = `${porcent}%`
+	barContainer.append(bar);
+	return barContainer;
+}
+
 function buildDataBlock(padre, hijos) {
 	const actDataDiv = document.createElement("div");
 	const yoTitle = document.createElement("h3");
@@ -194,18 +204,56 @@ function buildDataBlock(padre, hijos) {
 		const hijoDiv = document.createElement("div");
 		actTitle.textContent = act;
 		hijoDiv.classList = act;
+		hijoDiv.classList.add("hijoDiv");
 		actDataDiv.append(actTitle);
 		actDataDiv.append(hijoDiv);
 		// resumen comisiones, libro leyendo, libros leidos
 
+		const asistDiv = document.createElement("div");
+		asistDiv.style.display = "none";
+		asistDiv.classList = "asistDiv";
 		const { str: str1, num: num1 } = getTotalStrings("wentDates", act);
-		const fechasSi = str1;
+		const fechasSi = str1.split("; ").filter(Boolean);
 		const numFechasSi = num1;
-		hijoDiv.append(creaText("Fechas que asistio: " + fechasSi));
+		asistDiv.append(creaText("Fechas que asistio: " + fechasSi));
 		const { str: str2, num: num2 } = getTotalStrings("missedDates", act);
-		const fechasNo = str2;
+		const fechasNo = str2.split("; ").filter(Boolean);
 		const numFechasNo = num2;
-		hijoDiv.append(creaText("Fechas que falto: " + fechasNo));
+		asistDiv.append(creaText("Fechas que falto: " + fechasNo));
+		const detailsText = creaText("Asistencias: (click mostrar u ocultar detalles)")
+		detailsText.addEventListener("click", function(){
+			asistDiv.style.display = invertDisplay(asistDiv.style.display);
+		})
+		hijoDiv.append(detailsText);
+		hijoDiv.append(asistDiv);
+		 // Creating a calendar element
+		const calendarEl = document.createElement("div");
+		calendarEl.id = `calendar-${act}`;
+		hijoDiv.append(calendarEl);
+
+		// Initializing FullCalendar
+		const calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView: 'dayGridMonth',
+			events: [
+				...fechasSi.map(date => ({
+					title: 'Asistió',
+					start: date,
+					backgroundColor: 'green',
+					borderColor: 'green',
+					allDay: true
+				})),
+				...fechasNo.map(date => ({
+					title: 'Faltó',
+					start: date,
+					backgroundColor: 'red',
+					borderColor: 'red',
+					allDay: true
+				}))
+			]
+		});
+
+		calendar.render();
+
 		const totalReus = Number(numFechasSi + numFechasNo);
 		const porcent = `${Math.floor((100 * numFechasSi) / totalReus)}`;
 		hijoDiv.append(
@@ -215,6 +263,7 @@ function buildDataBlock(padre, hijos) {
 					`% (${numFechasSi}/${totalReus})`
 			)
 		);
+		hijoDiv.append(creaBarra(porcent));
 
 		const totRprts = getTotalNums("rprts", act);
 		hijoDiv.append(creaText(`Total de reportes: ${totRprts}`));
@@ -243,6 +292,7 @@ function buildDataBlock(padre, hijos) {
 				).toFixed(2)}% (${totComisDone}/${totComis})`
 			)
 		);
+		hijoDiv.append(creaBarra((totComisDone*100) / totComis))
 
 		const proxComis = allInfo[act].ListComis;
         if(proxComis != undefined && proxComis != ""){            			       
@@ -271,10 +321,19 @@ function buildDataBlock(padre, hijos) {
 		const totLibros = str3;
 		hijoDiv.append(creaText(`Lista de libros leidos: ${totLibros}`));
 
-		hijoDiv.style.display = "none";
+		// hijoDiv.style.display = "none";		
 		actTitle.addEventListener("click", function () {
-			hijoDiv.style.display = invertDisplay(hijoDiv.style.display);
-		});
+			// hijoDiv.style.display = invertDisplay(hijoDiv.style.display);
+			if (hijoDiv.classList.contains('showing')) {
+				hijoDiv.classList.remove('showing');
+				hijoDiv.classList.add('hiding');
+			} else if (hijoDiv.classList.contains('hiding')) {
+				hijoDiv.classList.remove('hiding');
+				hijoDiv.classList.add('showing');
+			} else {
+				hijoDiv.classList.add('showing');
+			}
+		});		
 
         const totMisas = getTotalNums("misas", act);
 		hijoDiv.append(creaText(`Total de misas acudidas: ${totMisas}`));
