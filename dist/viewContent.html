@@ -4,10 +4,10 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Ver Datos</title>
-		<script type="module" crossorigin src="/assets/viewContent-Dlbph1vk.js"></script>
+		<script type="module" crossorigin src="/assets/viewContent-BKq3LS0c.js"></script>
 		<link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
 		<link rel="modulepreload" crossorigin href="/assets/manageDbAndSs-BgUixtgR.js">
-		<link rel="stylesheet" crossorigin href="/assets/viewContent-DF6aqg_B.css">
+		<link rel="stylesheet" crossorigin href="/assets/viewContent-DDANw7i3.css">
 	</head>
 	<body>
 		<p id="email"></p>
@@ -18,8 +18,8 @@
 			<a href="viewContent.html">Ver Datos</a>
 			<a href="newOrder.html" class="NO">Re-estructurar centros</a>
 		</div>
-		<div id="datos">
-      <div class="loader" id="loader"></div>      
+		<div id="datos">		
+		<div class="spinner" id="loader"></div>			  
       </div>
     </div>
     <div class="NO" id="SaveOptions">
@@ -29,7 +29,26 @@
       </div>
       <div>
         <button id="UpStuff">Confirmar y Guardar</button>
-		<div class="loader" id="UpLoader"></div> 
+		<!-- <div class="loader" id="UpLoader"></div>  -->
+		<div class="loader" id="UpLoader">
+			<svg class="circle-outer" viewBox="0 0 86 86">
+				<circle class="back" cx="43" cy="43" r="40"></circle>
+				<circle class="front" cx="43" cy="43" r="40"></circle>
+				<circle class="new" cx="43" cy="43" r="40"></circle>
+			</svg>
+			<svg class="circle-middle" viewBox="0 0 60 60">
+				<circle class="back" cx="30" cy="30" r="27"></circle>
+				<circle class="front" cx="30" cy="30" r="27"></circle>
+			</svg>
+			<svg class="circle-inner" viewBox="0 0 34 34">
+				<circle class="back" cx="17" cy="17" r="14"></circle>
+				<circle class="front" cx="17" cy="17" r="14"></circle>
+			</svg>
+			<div class="text" data-text="Actualizando..."></div>
+		</div>
     </div>
+	<button id="theme-toggle">
+		<span id="theme-icon">☀️</span>
+	</button>
 	</body>
 </html>

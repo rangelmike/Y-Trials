@@ -83,6 +83,38 @@ class Queue {
 }
 let showQueue = new Queue();
 
+document.getElementById('theme-toggle').addEventListener('click', function () {
+    const body = document.body;
+    const themeIcon = document.getElementById('theme-icon');
+    
+    body.classList.toggle('dark-mode');
+    body.classList.toggle('light-mode');
+  
+    // Change icon based on theme
+    if (body.classList.contains('dark-mode')) {
+      themeIcon.textContent = '🌙'; // Moon icon for dark mode
+      localStorage.setItem('theme', 'dark');
+    } else {
+      themeIcon.textContent = '☀️'; // Sun icon for light mode
+      localStorage.setItem('theme', 'light');
+    }
+});
+  
+  // Load the saved theme from local storage
+window.addEventListener('DOMContentLoaded', (event) => {
+    const savedTheme = localStorage.getItem('theme');
+    const body = document.body;
+    const themeIcon = document.getElementById('theme-icon');
+  
+    if (savedTheme) {
+      body.classList.add(savedTheme + '-mode');
+      themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+    } else {
+      body.classList.add('light-mode'); // default to light mode
+      themeIcon.textContent = '☀️';
+    }
+});
+
 document.getElementById("logoutBtn").addEventListener("click", () => {
 	signOut(auth);
 	window.location.href = "index.html";
@@ -91,7 +123,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 UploadBtn.addEventListener('click', async () => {    
     if(document.getElementById("UpSheet").checked){
         UploadBtn.style.display = "none";
-		upLoader.style.display = "block";
+		upLoader.style.display = "flex";
         await updateSheet(allInfo, myName);        
     }
     if(document.getElementById("reset").checked){
