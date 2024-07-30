@@ -19,6 +19,10 @@ a:visited{
 	gap: 10px;
 }
 
+#block{
+  margin: 0 auto;
+}
+
 button {
 	--accent: blue;
 	margin-top: 5px;
